@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Check if file path is provided as argument
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <file_path>"
+    exit 1
+fi
+
+file_path=$1
+
+# Check if file exists
+if [ ! -f "$file_path" ]; then
+    echo "File $file_path does not exist."
+    exit 1
+fi
+
+# Iterate over each line in the file
+while IFS= read -r line; do
+    # Check if the line starts with "Exec"
+    if [[ $line == Exec* ]]; then
+        # Check if the line ends with %U
+        if [[ $line == *"%U" ]]; then
+            modified_line="${line//\%U/--enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime \%U}"
+        # Check if the line ends with %F
+        elif [[ $line == *"%F" ]]; then
+            modified_line="${line//\%F/--enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime \%F}"
+        else
+            modified_line="$line"
+        fi
+    else
+        modified_line="$line"
+    fi
+
+    # Output the modified line
+    echo "$modified_line"
+
+done < "$file_path" > "$file_path.tmp"
+
+# Replace the original file with the modified one
+mv "$file_path.tmp" "$file_path"
+cat "$file_path"
+

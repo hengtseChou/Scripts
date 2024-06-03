@@ -1,0 +1,35 @@
+#!/bin/bash
+_convert_to_single_line() {
+    local raw_input="$1"
+    local single_line="${raw_input//$'\n'/\\n}"
+    echo "$single_line"
+}
+
+if [ ! -f $HOME/bin/.improve-api-key ]; then
+	echo "Error: .improve-api-key not found."
+	exit 1
+else
+	api_key=$(cat $HOME/bin/.improve-api-key)
+fi
+
+prompt="I want you to act as a professional content improver. I will give you a sentence or a paragraph in any language and you will detect the language, understand the context of my text and improve it in the given language. Optimize the provided text to make it more concise, clear, and engaging while retaining its original meaning. Focus on enhancing readability, removing redundancies, and improving flow. Your goal is to create a polished version that captivates the reader's attention. Responed only with the improved text."
+content=$(_convert_to_single_line "$1")
+
+echo ":: Improving..."
+curl -s https://api.openai.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $api_key" \
+  -d '{
+    "model": "gpt-3.5-turbo-16k",
+    "messages": [
+      {
+        "role": "system",
+        "content": "'"$prompt"'"
+      },
+      {
+        "role": "user",
+        "content": "'"$content"'"
+      }
+    ]
+  }' | \
+  python3 -c "import json, sys; resp = json.load(sys.stdin); print(f'Error: {resp['error']['message']}' if 'error' in resp.keys() else resp['choices'][0]['message']['content'])"
