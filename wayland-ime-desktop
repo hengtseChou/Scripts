@@ -1,11 +1,11 @@
 #!/bin/bash
-
 # Check if file path is provided as argument
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <file_path>"
     exit 1
 fi
 
+sudo -v
 file_path=$1
 
 # Check if file exists
@@ -34,9 +34,9 @@ while IFS= read -r line; do
     # Output the modified line
     echo "$modified_line"
 
-done < "$file_path" > "$file_path.tmp"
+done < "$file_path" | sudo tee "$file_path.tmp" >/dev/null
 
 # Replace the original file with the modified one
-mv "$file_path.tmp" "$file_path"
+sudo mv "$file_path.tmp" "$file_path"
 cat "$file_path"
 
