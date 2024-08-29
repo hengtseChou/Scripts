@@ -2,7 +2,7 @@
 set -e
 if [ "$1" == "push" ]; then
     echo "Removing: .log .Rhistory .RData"
-    cd ~/nthu-stat/
+    cd ~/Stat/
     find . -name "*.log" -type f
     find . -name "*.log" -type f -delete
     find . -name "*.Rhistory" -type f
@@ -10,9 +10,9 @@ if [ "$1" == "push" ]; then
     find . -name "*.RData" -type f
     find . -name "*.RData" -type f -delete
     echo "Deletion completed. Proceed..."
-    rclone sync ~/nthu-stat/ gdrive:nthu-stat/ --transfers 32 --checkers 64 -P --exclude=".git/" --exclude=".venv/" --exclude="__pycache__/"
+    rclone sync ~/Stat/ gdrive:nthu-stat/ --transfers 32 --checkers 64 -P --exclude=".git/" --exclude=".venv/" --exclude="__pycache__/"
 elif [ "$1" == "pull" ]; then
-    rclone sync gdrive:nthu-stat/ ~/nthu-stat/ --transfers 32 --checkers 64 -P
+    rclone sync gdrive:nthu-stat/ ~/Stat/ --transfers 32 --checkers 64 -P
 elif [ "$1" == "refresh" ]; then
     rclone config reconnect gdrive:
 fi
