@@ -1,4 +1,4 @@
-*.txt
-*.improve-api-key
-*.translate-api-key
+.improve-api-key
+.translate-api-key
 change-wallpaper
+backup-iphone-photos
