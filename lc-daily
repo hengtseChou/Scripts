@@ -1,0 +1,15 @@
+#!/bin/bash
+
+daily=$(curl -s https://alfa-leetcode-api.onrender.com/daily)
+
+titleSlug=$(echo "$daily" | jq -r '.titleSlug')
+questionFrontendId=$(echo "$daily" | jq -r '.questionFrontendId')
+
+cd $HOME/GitHub/LeetCode/daily
+touch "$titleSlug.py"
+nano "$titleSlug.py"
+
+# black "$titleSlug.py" -l 100 -q
+git add "$titleSlug.py"
+git commit -m "no. $questionFrontendId"
+git push
