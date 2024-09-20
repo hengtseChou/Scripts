@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+current=$(git branch --show-current)
+git switch main
+git merge $current
+git push
+git switch $current
