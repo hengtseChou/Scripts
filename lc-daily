@@ -1,13 +1,31 @@
 #!/bin/bash
+set -e
+echo "Starting alfa-leetcode-api server..."
+docker start alfa-leetcode-api > /dev/null
 
-daily=$(curl -s https://alfa-leetcode-api.onrender.com/daily)
+echo "Fetching data from http://localhost:3000/daily..."
+
+daily=$(curl -s --retry 5 --retry-all-errors --retry-delay 1 http://localhost:3000/daily)
 
 titleSlug=$(echo "$daily" | jq -r '.titleSlug')
 questionFrontendId=$(echo "$daily" | jq -r '.questionFrontendId')
 
+echo "Completed. Shutting down alfa-leetcode-api server..."
+docker stop alfa-leetcode-api > /dev/null
+
 cd $HOME/GitHub/LeetCode/daily
+if [ -e "$titleSlug.py" ]; then
+    echo "The file "$titleSlug.py" already existed. Exiting"
+    exit 1
+fi
 touch "$titleSlug.py"
 nano "$titleSlug.py"
+
+if [ ! -s "$titleSlug.py" ]; then
+  echo "The file $titleSlug.py is empty. Removing"
+  rm "$titleSlug.py"
+  exit 1
+fi
 
 # black "$titleSlug.py" -l 100 -q
 git add "$titleSlug.py"
