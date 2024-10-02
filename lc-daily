@@ -9,25 +9,27 @@ daily=$(curl -s --retry 5 --retry-all-errors --retry-delay 1 http://localhost:30
 
 titleSlug=$(echo "$daily" | jq -r '.titleSlug')
 questionFrontendId=$(echo "$daily" | jq -r '.questionFrontendId')
+questionFrontendId=$(printf "%04d" $questionFrontendId)
+filename="$questionFrontendId-$titleSlug"
 
 echo "Completed. Shutting down alfa-leetcode-api server..."
 docker stop alfa-leetcode-api > /dev/null
 
 cd $HOME/GitHub/LeetCode/daily
-if [ -e "$titleSlug.py" ]; then
-    echo "The file "$titleSlug.py" already existed. Exiting"
+if [ -e "$filename.py" ]; then
+    echo "The file "$filename.py" already existed. Exiting"
     exit 1
 fi
-touch "$titleSlug.py"
-nano "$titleSlug.py"
+touch "$filename.py"
+nano "$filename.py"
 
-if [ ! -s "$titleSlug.py" ]; then
-  echo "The file $titleSlug.py is empty. Removing"
-  rm "$titleSlug.py"
+if [ ! -s "$filename.py" ]; then
+  echo "The file $filename.py is empty. Removing"
+  rm "$filename.py"
   exit 1
 fi
 
-# black "$titleSlug.py" -l 100 -q
-git add "$titleSlug.py"
-git commit -m "no. $questionFrontendId"
+# black "$filename.py" -l 100 -q
+git add "$filename.py"
+git commit -m "add: daily question $(date +%F)"
 git push

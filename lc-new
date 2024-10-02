@@ -1,0 +1,49 @@
+#!/bin/bash
+
+file="$HOME/Scripts/problems_all.json"
+source="https://raw.githubusercontent.com/bunnyxt/lcid/refs/heads/main/problems_all.json"
+
+if [ -z "$1" ]; then
+  echo "Usage: lc-new [--refresh] <question_id>"
+  exit 1
+fi
+
+if [ "$1" == "--refresh" ]; then
+  echo ":: Refreshing problem set..."
+  curl -s -o "$file" "$source"
+  
+  if [ $? -eq 0 ]; then # checks the exit status of the last executed command
+  	prettier $file --log-level silent -w
+    echo ":: Succeeded."
+    exit 0
+  else
+    echo ":: Failed to download the JSON file."
+    exit 1
+  fi
+fi
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 [--refresh] <question_id>"
+  exit 1
+fi
+
+if [ ! -f "$file" ]; then
+  echo ":: File $file not found. You can refresh it using --refresh."
+  exit 1
+fi
+
+data=$(cat "$file")
+question_id=$1
+title_slug=$(echo "$data" | jq -r --arg qid "$question_id" '.[$qid].titleSlug')
+new_py_file="$PWD/$question_id-$title_slug.py"
+
+if [ "$titleSlug" == "null" ]; then
+  echo ":: Question ID $question_id not found."
+else
+  touch "$new_py_file"
+  nano "$new_py_file"
+  echo ":: Running black formatter on the following files:"
+  echo "   - $new_py_file"
+  black "$new_py_file" -l 100 -q
+  echo ":: Black formatting applied."
+fi
