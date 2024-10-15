@@ -35,6 +35,7 @@ fi
 data=$(cat "$file")
 question_id=$1
 title_slug=$(echo "$data" | jq -r --arg qid "$question_id" '.[$qid].titleSlug')
+question_id=$(printf "%04d" $question_id)
 new_py_file="$PWD/$question_id-$title_slug.py"
 
 if [ "$titleSlug" == "null" ]; then
