@@ -1,16 +1,16 @@
 #!/bin/bash
-# Find all .Rhistory files excluding $HOME/.pyenv and its subdirectories
-rhistory_files=$(fd -H --type f "Rhistory")
+# Find all .Rhistory and .RData files excluding $HOME/.pyenv and its subdirectories
+files_to_delete=$(fd -H --type f "(Rhistory|RData)")
 
-# Check if any .Rhistory files were found
-if [ -z "$rhistory_files" ]; then
-  echo "No .Rhistory files found."
+# Check if any .Rhistory or .RData files were found
+if [ -z "$files_to_delete" ]; then
+  echo "No .Rhistory or .RData files found."
   exit 0
 fi
 
-# List the found .Rhistory files, each on a new line
-echo "The following .Rhistory files were found (excluding $ignore_path):"
-echo "$rhistory_files" | tr ' ' '\n'
+# List the found .Rhistory and .RData files, each on a new line
+echo "The following .Rhistory and .RData files were found:"
+echo "$files_to_delete" | tr ' ' '\n'
 
 # Prompt the user for confirmation to delete the files, default to yes
 read -p "Do you want to delete all of these files? (yes/no) [yes]: " confirm
@@ -20,8 +20,8 @@ confirm=${confirm:-yes}
 
 # If the user confirms, proceed with deletion
 if [ "$confirm" == "yes" ]; then
-  # Delete .Rhistory files
-  echo "$rhistory_files" | while read -r file; do
+  # Delete .Rhistory and .RData files
+  echo "$files_to_delete" | while read -r file; do
     if trash "$file"; then
       echo "Deleted: $file"
     else
