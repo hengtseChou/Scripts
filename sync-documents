@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+BLUE='\e[94m'
+NC='\e[0m'
+
+if [ "$1" == "push" ]; then
+    echo -en ":: Overwriting ${BLUE}**remote**${NC} storage. Proceed? (Y/n)"
+    read -e -r response
+    response=${response:-y}
+    if [[ "$response" == "y" ]]; then
+        rclone sync ~/Documents/ gdrive:Documents/ --transfers 16 --checkers 64 -P
+    else
+        echo ":: Syncing canceled."
+        exit 0
+    fi
+elif [ "$1" == "pull" ]; then 
+    echo -en ":: Overwriting ${BLUE}**local**${NC} storage. Proceed? (Y/n)"
+    read -e -r response
+    response=${response:-y}
+    if [[ "$response" == "y" ]]; then
+        rclone sync gdrive:Documents/ ~/Documents --transfers 16 --checkers 64 -P
+    else
+        echo ":: Syncing canceled."
+        exit 0
+    fi
+else
+    echo "Usage: $0 {push|pull}"
+    exit 1
+fi
