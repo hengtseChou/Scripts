@@ -1,4 +1,8 @@
 #!/bin/bash
+if [[ -n $(git status --porcelain) ]]; then
+  echo "Commit all changes before updating submodules."
+  exit 1
+fi
 git submodule update --remote
 git add .
 git commit -m 'submodule: update'
