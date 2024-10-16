@@ -1,6 +1,0 @@
-#!/bin/bash
-trash -f $HOME/.Rhistory
-trash -f $HOME/.python_history
-if [ -n "$(find $HOME/Stat -type f -name .Rhistory)" ]; then
-  trash -f $(find $HOME/Stat -type f -name .Rhistory)
-fi
