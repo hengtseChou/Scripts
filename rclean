@@ -1,0 +1,33 @@
+#!/bin/bash
+# Find all .Rhistory files excluding $HOME/.pyenv and its subdirectories
+rhistory_files=$(fd -H --type f "Rhistory")
+
+# Check if any .Rhistory files were found
+if [ -z "$rhistory_files" ]; then
+  echo "No .Rhistory files found."
+  exit 0
+fi
+
+# List the found .Rhistory files, each on a new line
+echo "The following .Rhistory files were found (excluding $ignore_path):"
+echo "$rhistory_files" | tr ' ' '\n'
+
+# Prompt the user for confirmation to delete the files, default to yes
+read -p "Do you want to delete all of these files? (yes/no) [yes]: " confirm
+
+# Default to 'yes' if the user presses Enter
+confirm=${confirm:-yes}
+
+# If the user confirms, proceed with deletion
+if [ "$confirm" == "yes" ]; then
+  # Delete .Rhistory files
+  echo "$rhistory_files" | while read -r file; do
+    if trash "$file"; then
+      echo "Deleted: $file"
+    else
+      echo "Failed to delete: $file"
+    fi
+  done
+else
+  echo "Deletion aborted."
+fi
