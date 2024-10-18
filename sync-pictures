@@ -9,7 +9,7 @@ if [ "$1" == "push" ]; then
     read -e -r response
     response=${response:-y}
     if [[ "$response" == "y" ]]; then
-        rclone sync ~/Pictures/ gdrive:Pictures/ --transfers 16 --checkers 64 -P
+        rclone sync ~/Pictures/ gdrive:Pictures/ --transfers 16 --checkers 64 -P --exclude="Screenshots/"
     else
         echo ":: Syncing canceled."
         exit 0
