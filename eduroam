@@ -3,7 +3,6 @@
 #    Script made by hengtseChou
 #    Fix eduroam for Arch-based Linux
 # ---------------------------------------------------------------------------- #
-set -e
 help() {
     echo "Fix eduroam for Arch-based Linux"
     echo ""

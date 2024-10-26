@@ -4,7 +4,6 @@
 #    Merge the current branch to main and push
 #    Then switch back to the current branch
 # ---------------------------------------------------------------------------- #
-set -e
 current=$(git branch --show-current)
 if [ "$current" = "main" ]; then
     echo "You are already on main."

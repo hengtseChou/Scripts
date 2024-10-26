@@ -9,7 +9,6 @@ if ! command -v fd &>/dev/null; then
   exit 1
 fi
 
-set -e
 use_trash=false
 if command -v trash &>/dev/null; then
   use_trash=true
