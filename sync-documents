@@ -3,8 +3,6 @@
 #    Script made by hengtseChou
 #    An rclone wrapper to sync ~/Documents to Google Drive
 # ---------------------------------------------------------------------------- #
-set -e
-
 BLUE='\e[94m'
 NC='\e[0m'
 
