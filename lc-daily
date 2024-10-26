@@ -6,14 +6,12 @@
 # ---------------------------------------------------------------------------- #
 solution_dir="$HOME/GitHub/LeetCode"
 
-if ! command -v docker &>/dev/null; then
-  echo "Error: docker is not installed."
-  exit 1
-fi
-if ! command -v jq &>/dev/null; then
-  echo "Error: jq is not installed."
-  exit 1
-fi
+for cmd in docker jq nano curl; do
+  if ! command -v $cmd &>/dev/null; then
+    echo "Error: $cmd is not installed."
+    exit 1
+  fi
+done
 if ! docker container ls -a --format '{{.Names}}' | grep -q '^alfa-leetcode-api$'; then
   docker container create --name alfa-leetcode-api -p 3000:3000 alfaarghya/alfa-leetcode-api:2.0.1
 fi
@@ -23,6 +21,11 @@ docker start alfa-leetcode-api >/dev/null
 echo "Fetching data from http://localhost:3000/daily..."
 
 daily=$(curl -s --retry 10 --retry-all-errors --retry-delay 1 http://localhost:3000/daily)
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to fetch data from http://localhost:3000/daily"
+  docker stop alfa-leetcode-api >/dev/null
+  exit 1
+fi
 
 titleSlug=$(echo "$daily" | jq -r '.titleSlug')
 questionFrontendId=$(echo "$daily" | jq -r '.questionFrontendId')
