@@ -1,4 +1,8 @@
 #!/bin/bash
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    Update submodules for the current repository
+# ---------------------------------------------------------------------------- #
 if [[ -n $(git status --porcelain) ]]; then
   echo "Commit all changes before updating submodules."
   exit 1

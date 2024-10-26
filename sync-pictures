@@ -1,8 +1,17 @@
 #!/bin/bash
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    An rclone wrapper to sync ~/Pictures go Google Drive
+# ---------------------------------------------------------------------------- #
 set -e
 
 BLUE='\e[94m'
 NC='\e[0m'
+
+if ! command -v rclone 2>&1 >/dev/null; then
+    echo "Error: rclone is not installed."
+    exit 1
+fi
 
 if [ "$1" == "push" ]; then
     echo -en ":: Overwriting ${BLUE}**remote**${NC} storage. Proceed? (Y/n)"
@@ -14,7 +23,7 @@ if [ "$1" == "push" ]; then
         echo ":: Syncing canceled."
         exit 0
     fi
-elif [ "$1" == "pull" ]; then 
+elif [ "$1" == "pull" ]; then
     echo -en ":: Overwriting ${BLUE}**local**${NC} storage. Proceed? (Y/n)"
     read -e -r response
     response=${response:-y}
@@ -28,4 +37,3 @@ else
     echo "Usage: $0 {push|pull}"
     exit 1
 fi
-

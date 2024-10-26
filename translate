@@ -1,31 +1,36 @@
 #!/bin/bash
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    Utilize OpenAI API to translate
+#    Support zh-tw to en, en to zh-tw
+# ---------------------------------------------------------------------------- #
 _convert_to_single_line() {
-    local raw_input="$1"
-    local single_line="${raw_input//$'\n'/\\n}"
-    echo "$single_line"
+  local raw_input="$1"
+  local single_line="${raw_input//$'\n'/\\n}"
+  echo "$single_line"
 }
 
 if [ ! -f $HOME/bin/.translate-api-key ]; then
-	echo "Error: .translate-api-key not found."
-	exit 1
+  echo "Error: .translate-api-key not found."
+  exit 1
 else
-	api_key=$(cat $HOME/bin/.translate-api-key)
+  api_key=$(cat $HOME/bin/.translate-api-key)
 fi
 
 if [ "$1" == "--to-en" ]; then
-	prompt="I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations."
+  prompt="I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations."
 elif [ "$1" == "--to-zh" ]; then
-	prompt="你是一個專業的繁體中文翻譯員。我會用任何語言傳訊息給你，請在完整的理解訊息內容後，翻譯成繁體中文，並潤飾其內容，使翻譯後的內容更加通順，但必須保持原本的意義。我希望你只回答最後的翻譯及潤飾結果，不要寫解釋，並注意不要使用簡體中文或中國用語。"
+  prompt="你是一個專業的繁體中文翻譯員。我會用任何語言傳訊息給你，請在完整的理解訊息內容後，翻譯成繁體中文，並潤飾其內容，使翻譯後的內容更加通順，但必須保持原本的意義。我希望你只回答最後的翻譯及潤飾結果，不要寫解釋，並注意不要使用簡體中文或中國用語。"
 else
-	echo "Usage: translate --to-en/--to-zh [content]"
-	exit 1
+  echo "Usage: translate --to-en/--to-zh [content]"
+  exit 1
 fi
 
 if [ -z "$2" ]; then
-    echo "Usage: translate --to-en/--to-zh [content]"
-	exit 1
+  echo "Usage: translate --to-en/--to-zh [content]"
+  exit 1
 else
-    content=$(_convert_to_single_line "$2")
+  content=$(_convert_to_single_line "$2")
 fi
 
 echo ":: Translating..."
@@ -44,5 +49,5 @@ curl -s https://api.openai.com/v1/chat/completions \
         "content": "'"$content"'"
       }
     ]
-  }' | \
+  }' |
   python3 -c "import json, sys; resp = json.load(sys.stdin); print(f'Error: {resp['error']['message']}' if 'error' in resp.keys() else resp['choices'][0]['message']['content'])"

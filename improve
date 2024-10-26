@@ -1,15 +1,20 @@
 #!/bin/bash
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    Utilize OpenAI API to improve writing
+#    Should work with any language input by the user
+# ---------------------------------------------------------------------------- #
 _convert_to_single_line() {
-    local raw_input="$1"
-    local single_line="${raw_input//$'\n'/\\n}"
-    echo "$single_line"
+  local raw_input="$1"
+  local single_line="${raw_input//$'\n'/\\n}"
+  echo "$single_line"
 }
 
 if [ ! -f $HOME/bin/.improve-api-key ]; then
-	echo "Error: .improve-api-key not found."
-	exit 1
+  echo "Error: .improve-api-key not found."
+  exit 1
 else
-	api_key=$(cat $HOME/bin/.improve-api-key)
+  api_key=$(cat $HOME/bin/.improve-api-key)
 fi
 
 prompt="I want you to act as a professional content improver. I will give you a sentence or a paragraph in any language and you will detect the language, understand the context of my text and improve it in the given language. Optimize the provided text to make it more concise, clear, and engaging while retaining its original meaning. Focus on enhancing readability, removing redundancies, and improving flow. Your goal is to create a polished version that captivates the reader's attention. Responed only with the improved text."
@@ -31,5 +36,5 @@ curl -s https://api.openai.com/v1/chat/completions \
         "content": "'"$content"'"
       }
     ]
-  }' | \
+  }' |
   python3 -c "import json, sys; resp = json.load(sys.stdin); print(f'Error: {resp['error']['message']}' if 'error' in resp.keys() else resp['choices'][0]['message']['content'])"

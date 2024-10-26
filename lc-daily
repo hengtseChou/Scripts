@@ -1,11 +1,28 @@
 #!/bin/bash
-set -e
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    Create a new LeetCode POTD python solution file via alfa-leetcode-api
+#    User should modify the directory based on their own setup
+# ---------------------------------------------------------------------------- #
+solution_dir="$HOME/GitHub/LeetCode"
+
+if ! command -v docker &>/dev/null; then
+  echo "Error: docker is not installed."
+  exit 1
+fi
+if ! command -v jq &>/dev/null; then
+  echo "Error: jq is not installed."
+  exit 1
+fi
+if ! docker container ls -a --format '{{.Names}}' | grep -q '^alfa-leetcode-api$'; then
+  docker container create --name alfa-leetcode-api -p 3000:3000 alfaarghya/alfa-leetcode-api:2.0.1
+fi
 echo "Starting alfa-leetcode-api server..."
-docker start alfa-leetcode-api > /dev/null
+docker start alfa-leetcode-api >/dev/null
 
 echo "Fetching data from http://localhost:3000/daily..."
 
-daily=$(curl -s --retry 5 --retry-all-errors --retry-delay 1 http://localhost:3000/daily)
+daily=$(curl -s --retry 10 --retry-all-errors --retry-delay 1 http://localhost:3000/daily)
 
 titleSlug=$(echo "$daily" | jq -r '.titleSlug')
 questionFrontendId=$(echo "$daily" | jq -r '.questionFrontendId')
@@ -13,12 +30,12 @@ questionFrontendId=$(printf "%04d" $questionFrontendId)
 filename="$questionFrontendId-$titleSlug"
 
 echo "Completed. Shutting down alfa-leetcode-api server..."
-docker stop alfa-leetcode-api > /dev/null
+docker stop alfa-leetcode-api >/dev/null
 
-cd $HOME/GitHub/LeetCode/daily
+cd "$leetcode_dir/daily"
 if [ -e "$filename.py" ]; then
-    echo "The file "$filename.py" already existed. Exiting"
-    exit 1
+  echo "The file "$filename.py" already existed. Exiting"
+  exit 1
 fi
 touch "$filename.py"
 nano "$filename.py"
@@ -29,7 +46,6 @@ if [ ! -s "$filename.py" ]; then
   exit 1
 fi
 
-# black "$filename.py" -l 100 -q
 git add "$filename.py"
 git commit -m "add: daily question $(date +%F)"
 git push

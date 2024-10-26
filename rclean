@@ -1,31 +1,47 @@
 #!/bin/bash
-# Find all .Rhistory and .RData files excluding $HOME/.pyenv and its subdirectories
-files_to_delete=$(fd -H --type f "(Rhistory|RData)")
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    Clean up .Rhistory and .RData files
+#    Recursively from the current directory
+# ---------------------------------------------------------------------------- #
+if ! command -v fd &>/dev/null; then
+  echo "Error: fd is not installed."
+  exit 1
+fi
 
-# Check if any .Rhistory or .RData files were found
+set -e
+use_trash=false
+if command -v trash &>/dev/null; then
+  use_trash=true
+fi
+
+files_to_delete=$(fd -H --type f "(Rhistory|RData)" --exclude "Trash" --exclude "R" --exclude "Telegram")
 if [ -z "$files_to_delete" ]; then
   echo "No .Rhistory or .RData files found."
   exit 0
 fi
-
-# List the found .Rhistory and .RData files, each on a new line
 echo "The following .Rhistory and .RData files were found:"
-echo "$files_to_delete" | tr ' ' '\n'
+while IFS= read -r file; do
+  echo "  - $file"
+done <<<"$files_to_delete"
 
-# Prompt the user for confirmation to delete the files, default to yes
 read -p "Do you want to delete all of these files? (yes/no) [yes]: " confirm
-
-# Default to 'yes' if the user presses Enter
 confirm=${confirm:-yes}
 
-# If the user confirms, proceed with deletion
 if [ "$confirm" == "yes" ]; then
-  # Delete .Rhistory and .RData files
   echo "$files_to_delete" | while read -r file; do
-    if trash "$file"; then
-      echo "Deleted: $file"
+    if $use_trash; then
+      if trash "$file"; then
+        echo "Deleted: $file"
+      else
+        echo "Failed to delete: $file"
+      fi
     else
-      echo "Failed to delete: $file"
+      if rm -f "$file"; then
+        echo "Removed: $file"
+      else
+        echo "Failed to remove: $file"
+      fi
     fi
   done
 else
