@@ -10,6 +10,18 @@ _convert_to_single_line() {
   echo "$single_line"
 }
 
+_usage() {
+  echo "Usage: improve [content]"
+}
+
+if [ "$1" == "--help" ]; then
+  _usage
+  exit 0
+elif [ -z "$1" ]; then
+  _usage
+  exit 1
+fi
+
 if [ ! -f $HOME/bin/.improve-api-key ]; then
   echo "Error: .improve-api-key not found."
   exit 1

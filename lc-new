@@ -8,8 +8,12 @@
 file="$HOME/Scripts/problems_all.json"
 source="https://raw.githubusercontent.com/bunnyxt/lcid/refs/heads/main/problems_all.json"
 
-if [ -z "$1" ]; then
+_usage() {
   echo "Usage: lc-new [--refresh] <question_id>"
+}
+
+if [ -z "$1" ]; then
+  _usage
   exit 1
 fi
 
@@ -37,7 +41,7 @@ if [ "$1" == "--refresh" ]; then
 fi
 
 if [ -z "$1" ]; then
-  echo "Usage: $0 [--refresh] <question_id>"
+  _usage
   exit 1
 fi
 

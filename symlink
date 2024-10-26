@@ -4,12 +4,12 @@
 #    Symlink dotfiles to ~/ or ~/.config
 #    Also support custom directory
 # ---------------------------------------------------------------------------- #
-help() {
-  echo "Usage: symlink <dotfile> [--to-home] [--to-config] [--custom-dir <path>]" >&2
+_usage() {
+  echo "Usage: symlink <dotfile> [--to-home] [--to-config] [--custom-dir <path>]"
 }
 
 if [ $# -lt 1 ]; then
-  help
+  _usage
   exit 1
 fi
 
@@ -49,7 +49,7 @@ done
 
 # If no valid options were provided (target_dir is empty), show an error and exit
 if [ -z "$target_dir" ]; then
-  help
+  _usage
   exit 1
 fi
 

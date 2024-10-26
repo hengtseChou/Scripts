@@ -3,21 +3,19 @@
 #    Script made by hengtseChou
 #    Fix eduroam for Arch-based Linux
 # ---------------------------------------------------------------------------- #
-help() {
-    echo "Fix eduroam for Arch-based Linux"
-    echo ""
-    echo "Usage: eduroam <wifi-name>"
+_usage() {
+  echo "Usage: eduroam <wifi-name>"
 }
 
 if [ "$#" -lt 1 ]; then
-    help
-    exit 1
+  _usage
+  exit 1
 elif [ "$1" == "--help" ]; then
-    help
-    exit 0
+  _usage
+  exit 0
 fi
 nmcli connection modify $1 802-1x.phase1-auth-flags 32
-echo "setting phase1-auth-flags=32 for $1"
-echo "restarting Network Manager..."
+echo ":: Setting phase1-auth-flags=32 for $1"
+echo ":: Restarting Network Manager..."
 sudo systemctl restart NetworkManager
-echo "Done."
+echo ":: Done."
