@@ -1,0 +1,31 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------- #
+#    Script made by hengtseChou
+#    Mount or unmount iPhone
+# ---------------------------------------------------------------------------- #
+
+_usage() {
+  echo "Usage: iPhone [-m|-u]"
+  echo "  -m: mount iPhone"
+  echo "  -u: unmount iPhone"
+}
+
+operation=$1
+if [ $# -eq 0 ]; then
+  _usage
+  exit 1
+fi
+if [ $operation == "-m" ]; then
+  mkdir -p ~/iPhone
+  ifuse ~/iPhone
+  echo "Mounted at ~/iPhone!"
+elif [ $operation == "-u" ]; then
+  umount ~/iPhone
+  rm -rf ~/iPhone
+  echo "Unmounted!"
+elif [ $operation == "-h" ] || [ $operation == "--help" ]; then
+  _usage
+else
+  _usage
+  exit 1
+fi

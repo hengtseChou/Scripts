@@ -6,6 +6,7 @@ These scripts simplify or wrap many of my daily routine/command line operations 
 
 - `eduroam`
 - `enable-wayland`
+- `iPhone`
 - `symlink`
 
 ## OpenAI API
