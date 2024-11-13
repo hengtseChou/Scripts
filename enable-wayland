@@ -32,7 +32,8 @@ while IFS= read -r line; do
   else
     modified_line="$line"
   fi
-done <"$desktop_file" | sudo tee "$desktop_file.tmp" >/dev/null
+  echo "$modified_line"
+done < "$desktop_file" > "/tmp/$(basename "$desktop_file").tmp"
 
-sudo mv "$desktop_file.tmp" "$desktop_file"
+sudo mv "/tmp/$(basename "$desktop_file").tmp" "$desktop_file"
 cat "$desktop_file"
