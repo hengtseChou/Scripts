@@ -4,13 +4,13 @@
 #    Clean up .Rhistory and .RData files
 #    Recursively from the current directory
 # ---------------------------------------------------------------------------- #
-if ! command -v fd 2&>1 /dev/null; then
+if ! command -v fd 2>&1 >/dev/null; then
   echo "Error: fd is not installed."
   exit 1
 fi
 
 use_trash=false
-if command -v trash 2&>1 /dev/null; then
+if command -v trash 2>&1 >/dev/null; then
   use_trash=true
 fi
 
