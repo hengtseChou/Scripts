@@ -14,7 +14,7 @@ if command -v trash 2>&1 >/dev/null; then
   use_trash=true
 fi
 
-pycache_dirs=$(fd -H --type d "__pycache__" --exclude="pyenv" --exclude="pipx" --exclude="Trash" --exclude=".venv" --exclude=".vscode")
+pycache_dirs=$(fd -H --type d "__pycache__" --exclude=".pyenv" --exclude="pipx" --exclude="Trash" --exclude=".venv" --exclude=".vscode")
 python_history_files=$(fd -H --type f "python_history" --exclude="Trash")
 if [ -z "$pycache_dirs" ] && [ -z "$python_history_files" ]; then
   echo "No __pycache__ directories or .python_history files found."
