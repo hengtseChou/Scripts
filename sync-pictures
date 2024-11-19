@@ -12,7 +12,7 @@ if ! command -v rclone 2>&1 >/dev/null; then
 fi
 
 if [ "$1" == "push" ]; then
-    echo -en ":: Overwriting ${BLUE}**remote**${NC} storage. Proceed? (Y/n)"
+    echo -en ":: Overwriting ${BLUE}**remote**${NC} storage. Proceed? (Y/n): "
     read -e -r response
     response=${response:-y}
     if [[ "$response" == "y" ]]; then
@@ -22,7 +22,7 @@ if [ "$1" == "push" ]; then
         exit 0
     fi
 elif [ "$1" == "pull" ]; then
-    echo -en ":: Overwriting ${BLUE}**local**${NC} storage. Proceed? (Y/n)"
+    echo -en ":: Overwriting ${BLUE}**local**${NC} storage. Proceed? (Y/n): "
     read -e -r response
     response=${response:-y}
     if [[ "$response" == "y" ]]; then
