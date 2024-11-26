@@ -8,6 +8,7 @@ These scripts simplify or wrap many of my daily routine/command line operations 
 - `enable-wayland`
 - `iPhone`
 - `symlink`
+- `xs`
 
 ## OpenAI API
 
