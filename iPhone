@@ -1,16 +1,17 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------- #
 #    Script made by hengtseChou
-#    Mount or unmount iPhone
+#    Mount or unmount iPhone via ifuse
 # ---------------------------------------------------------------------------- #
 
 _usage() {
-  echo "Usage: iPhone [-m|-u]"
+  echo "Usage: iPhone [-m|-u|-h|--help]"
   echo "  -m: mount iPhone"
   echo "  -u: unmount iPhone"
+  echo "  -h, --help: show this help message"
 }
 
-if ! command -v ifuse 2>&1 /dev/null; then
+if ! command -v ifuse /dev/null 2>&1; then
   echo "Error: ifuse is required."
   exit 1
 fi
@@ -23,11 +24,21 @@ fi
 if [ $operation == "-m" ]; then
   mkdir -p ~/iPhone
   ifuse ~/iPhone
+  if [ $? -eq 0 ]; then
+    echo "Mounted at ~/iPhone!"
+  fi
   echo "Mounted at ~/iPhone!"
 elif [ $operation == "-u" ]; then
-  umount ~/iPhone
-  rm -rf ~/iPhone
-  echo "Unmounted!"
+  if [ ! -d ~/iPhone ]; then
+    echo "~/iPhone does not exist."
+    exit 1
+  else
+    umount ~/iPhone
+    if [ $? -eq 0 ]; then
+      rm -rf ~/iPhone
+      echo "Unmounted!"
+    fi
+  fi
 elif [ $operation == "-h" ] || [ $operation == "--help" ]; then
   _usage
 else
