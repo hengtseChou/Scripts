@@ -5,6 +5,7 @@
 #    User should modify the directory based on their own setup
 # ---------------------------------------------------------------------------- #
 solution_dir="$HOME/GitHub/LeetCode"
+mkdir -p $solution_dir
 
 for cmd in docker jq nano curl; do
   if ! command -v $cmd 2>&1 >/dev/null; then
