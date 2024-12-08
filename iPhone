@@ -11,7 +11,7 @@ _usage() {
   echo "  -h, --help: show this help message"
 }
 
-if ! command -v ifuse /dev/null 2>&1; then
+if ! command -v ifuse >/dev/null 2>&1; then
   echo "Error: ifuse is required."
   exit 1
 fi
@@ -27,7 +27,6 @@ if [ $operation == "-m" ]; then
   if [ $? -eq 0 ]; then
     echo "Mounted at ~/iPhone!"
   fi
-  echo "Mounted at ~/iPhone!"
 elif [ $operation == "-u" ]; then
   if [ ! -d ~/iPhone ]; then
     echo "~/iPhone does not exist."
