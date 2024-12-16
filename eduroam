@@ -15,7 +15,7 @@ elif [ "$1" == "--help" ]; then
   exit 0
 fi
 nmcli connection modify $1 802-1x.phase1-auth-flags 32
-echo ":: Setting phase1-auth-flags=32 for $1"
-echo ":: Restarting Network Manager..."
+echo "[INFO] Setting phase1-auth-flags=32 for $1"
+echo "[INFO] Restarting Network Manager..."
 sudo systemctl restart NetworkManager
-echo ":: Done."
+echo "[INFO] Done"

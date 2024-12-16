@@ -5,7 +5,7 @@
 #    Recursively from the current directory
 # ---------------------------------------------------------------------------- #
 if ! command -v fd 2>&1 >/dev/null; then
-  echo "Error: fd is not installed."
+  echo "[ERROR] fd is not installed."
   exit 1
 fi
 
@@ -16,12 +16,12 @@ fi
 
 files_to_delete=$(fd -H --type f "(Rhistory|RData)" --exclude "Trash" --exclude "R" --exclude "Telegram")
 if [ -z "$files_to_delete" ]; then
-  echo "No .Rhistory or .RData files found."
+  echo "[INFO] No .Rhistory or .RData files found"
   exit 0
 fi
-echo "The following .Rhistory and .RData files were found:"
+echo "[INFO] The following .Rhistory and .RData files were found:"
 while IFS= read -r file; do
-  echo "  - $file"
+  echo "        - $PWD/$file"
 done <<<"$files_to_delete"
 
 read -p "Do you want to delete all of these files? (yes/no) [yes]: " confirm
@@ -31,18 +31,18 @@ if [ "$confirm" == "yes" ]; then
   echo "$files_to_delete" | while read -r file; do
     if $use_trash; then
       if trash "$file"; then
-        echo "Deleted: $file"
+        echo "[INFO] Deleted: $PWD/$file"
       else
-        echo "Failed to delete: $file"
+        echo "[ERROR] Failed to delete: $PWD/$file"
       fi
     else
       if rm -f "$file"; then
-        echo "Removed: $file"
+        echo "[INFO] Removed: $PWD/$file"
       else
-        echo "Failed to remove: $file"
+        echo "[ERROR] Failed to remove: $PWD/$file"
       fi
     fi
   done
 else
-  echo "Deletion aborted."
+  echo "[INFO] Deletion aborted"
 fi

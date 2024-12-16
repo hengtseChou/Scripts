@@ -7,23 +7,29 @@
 solution_dir="$HOME/GitHub/LeetCode"
 mkdir -p $solution_dir
 
-for cmd in docker jq nano curl; do
-  if ! command -v $cmd 2>&1 >/dev/null; then
-    echo "Error: $cmd is not installed."
-    exit 1
+deps=("docker" "jq" "nano" "curl")
+missing_deps=()
+for dep in "${deps[@]}"; do
+  if ! pacman -Qi "$dep" &>/dev/null; then
+    missing_deps+=("$dep")
   fi
 done
+if [ ${#missing_deps[@]} -ne 0 ]; then
+  echo "[ERROR] Missing dependencies: ${missing_deps[*]}"
+  exit 1
+fi
+
 if ! docker container ls -a --format '{{.Names}}' | grep -q '^alfa-leetcode-api$'; then
   docker container create --name alfa-leetcode-api -p 3000:3000 alfaarghya/alfa-leetcode-api:2.0.1
 fi
-echo "Starting alfa-leetcode-api server..."
+echo "[INFO] Starting alfa-leetcode-api server..."
 docker start alfa-leetcode-api >/dev/null
 
-echo "Fetching data from http://localhost:3000/daily..."
+echo "[INFO] Fetching data from http://localhost:3000/daily..."
 
 daily=$(curl -s --retry 10 --retry-all-errors --retry-delay 1 http://localhost:3000/daily)
 if [ $? -ne 0 ]; then
-  echo "Error: Failed to fetch data from http://localhost:3000/daily"
+  echo "[ERROR] Failed to fetch data from http://localhost:3000/daily"
   docker stop alfa-leetcode-api >/dev/null
   exit 1
 fi
@@ -33,19 +39,19 @@ questionFrontendId=$(echo "$daily" | jq -r '.questionFrontendId')
 questionFrontendId=$(printf "%04d" $questionFrontendId)
 filename="$questionFrontendId-$titleSlug"
 
-echo "Completed. Shutting down alfa-leetcode-api server..."
+echo "[INFO] Completed. Shutting down alfa-leetcode-api server..."
 docker stop alfa-leetcode-api >/dev/null
 
 cd "$solution_dir/daily"
 if [ -e "$filename.py" ]; then
-  echo "The file "$filename.py" already existed. Exiting"
+  echo "[ERROR] The file "$filename.py" already existed. Exiting"
   exit 1
 fi
 touch "$filename.py"
 nano "$filename.py"
 
 if [ ! -s "$filename.py" ]; then
-  echo "The file $filename.py is empty. Removing"
+  echo "[ERROR] The file $filename.py is empty. Removing"
   rm "$filename.py"
   exit 1
 fi

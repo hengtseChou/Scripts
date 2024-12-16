@@ -4,8 +4,8 @@
 #    Clean up __pycache__ directories and .python_history files
 #    Recursively from the current directory
 # ---------------------------------------------------------------------------- #
-if ! command -v fd 2>&1 >/dev/null; then
-  echo "Error: fd is not installed."
+if ! pacman -Qi fd 2>&1 >/dev/null; then
+  echo "[ERROR] fd is not installed"
   exit 1
 fi
 
@@ -17,24 +17,24 @@ fi
 pycache_dirs=$(fd -H --type d "__pycache__" --exclude=".pyenv" --exclude="pipx" --exclude="Trash" --exclude=".venv" --exclude=".vscode")
 python_history_files=$(fd -H --type f "python_history" --exclude="Trash")
 if [ -z "$pycache_dirs" ] && [ -z "$python_history_files" ]; then
-  echo "No __pycache__ directories or .python_history files found."
+  echo "[INFO] No __pycache__ directories or .python_history files found"
   exit 0
 fi
 if [ -n "$pycache_dirs" ]; then
-  echo "The following __pycache__ directories were found:"
+  echo "[INFO] The following __pycache__ directories were found:"
   while IFS= read -r dir; do
-    echo "  - $PWD/$dir"
+    echo "        - $PWD/$dir"
   done <<<"$pycache_dirs"
 else
-  echo "No __pycache__ directories found."
+  echo "[INFO] No __pycache__ directories found"
 fi
 if [ -n "$python_history_files" ]; then
-  echo "The following .python_history files were found:"
+  echo "[INFO] The following .python_history files were found:"
   while IFS= read -r file; do
-    echo "  - $PWD/$file"
+    echo "        - $PWD/$file"
   done <<<"$python_history_files"
 else
-  echo "No .python_history files found."
+  echo "[INFO] No .python_history files found"
 fi
 
 read -p "Do you want to delete all of these directories and files? (yes/no) [yes]: " confirm
@@ -45,15 +45,15 @@ if [ "$confirm" == "yes" ]; then
     echo "$pycache_dirs" | while read -r dir; do
       if $use_trash; then
         if trash "$dir"; then
-          echo "Deleted: $dir"
+          echo "[INFO] Deleted: $PWD/$dir"
         else
-          echo "Failed to delete: $dir"
+          echo "[ERROR] Failed to delete: $PWD/$dir"
         fi
       else
         if rm -rf "$dir"; then
-          echo "Removed: $dir"
+          echo "[INFO] Removed: $PWD/$dir"
         else
-          echo "Failed to reomve: $dir"
+          echo "[ERROR] Failed to reomve: $PWD/$dir"
         fi
       fi
     done
@@ -62,19 +62,19 @@ if [ "$confirm" == "yes" ]; then
     echo "$python_history_files" | while read -r file; do
       if $use_trash; then
         if trash "$file"; then
-          echo "Deleted: $file"
+          echo "[INFO] Deleted: $PWD/$file"
         else
-          echo "Failed to delete: $file"
+          echo "[ERROR] Failed to delete: $PWD/$file"
         fi
       else
         if rm -f "$file"; then
-          echo "Removed: $file"
+          echo "[INFO] Removed: $PWD/$file"
         else
-          echo "Failed to remove: $file"
+          echo "[ERROR] Failed to remove: $PWD/$file"
         fi
       fi
     done
   fi
 else
-  echo "Deletion aborted."
+  echo "[INFO] Deletion aborted"
 fi

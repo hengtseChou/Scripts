@@ -11,8 +11,8 @@ _usage() {
   echo "  -h, --help: show this help message"
 }
 
-if ! command -v ifuse >/dev/null 2>&1; then
-  echo "Error: ifuse is required."
+if ! pacman -Qi ifuse &>/dev/null 2>&1; then
+  echo "[ERROR] ifuse is not installed"
   exit 1
 fi
 
@@ -25,17 +25,17 @@ if [ $operation == "-m" ]; then
   mkdir -p ~/iPhone
   ifuse ~/iPhone
   if [ $? -eq 0 ]; then
-    echo "Mounted at ~/iPhone!"
+    echo "[INFO] Mounted at ~/iPhone!"
   fi
 elif [ $operation == "-u" ]; then
   if [ ! -d ~/iPhone ]; then
-    echo "~/iPhone does not exist."
+    echo "[ERROR] ~/iPhone does not exist"
     exit 1
   else
     umount ~/iPhone
     if [ $? -eq 0 ]; then
       rm -rf ~/iPhone
-      echo "Unmounted!"
+      echo "[INFO] Unmounted!"
     fi
   fi
 elif [ $operation == "-h" ] || [ $operation == "--help" ]; then

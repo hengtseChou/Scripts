@@ -23,7 +23,7 @@ elif [ -z "$1" ]; then
 fi
 
 if [ ! -f $HOME/bin/.improve-api-key ]; then
-  echo "Error: .improve-api-key not found."
+  echo "[ERROR] .improve-api-key not found."
   exit 1
 else
   api_key=$(cat $HOME/bin/.improve-api-key)
@@ -32,7 +32,7 @@ fi
 prompt="I want you to act as a professional content improver. I will give you a sentence or a paragraph in any language and you will detect the language, understand the context of my text and improve it in the given language. Optimize the provided text to make it more concise, clear, and engaging while retaining its original meaning. Focus on enhancing readability, removing redundancies, and improving flow. Your goal is to create a polished version that captivates the reader's attention. Responed only with the improved text."
 content=$(_convert_to_single_line "$1")
 
-echo ":: Improving..."
+echo "[INFO] Improving..."
 curl -s https://api.openai.com/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $api_key" \

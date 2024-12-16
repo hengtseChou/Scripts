@@ -6,12 +6,12 @@
 # ---------------------------------------------------------------------------- #
 current=$(git branch --show-current)
 if [ "$current" = "main" ]; then
-    echo "You are already on main."
-    exit 1
+  echo "[INFO] You are already on main."
+  exit 1
 fi
 if ! git --no-pager branch | grep -q "main"; then
-    echo "Error: No branch named main can be found."
-    exit 1
+  echo "[ERROR] No branch named main can be found."
+  exit 1
 fi
 git switch main
 git merge $current

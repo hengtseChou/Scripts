@@ -19,23 +19,23 @@ fi
 
 for cmd in jq nano curl; do
   if ! command -v $cmd 2>&1 >/dev/null; then
-    echo "Error: $cmd is not installed."
+    echo "[ERROR] $cmd is not installed."
     exit 1
   fi
 done
 
 if [ "$1" == "--refresh" ]; then
-  echo ":: Refreshing problem set..."
+  echo "[INFO] Refreshing problem set..."
   curl -s -o "$file" "$source"
 
   if [ $? -eq 0 ]; then # checks the exit status of the last executed command
     if command -v prettier 2>&1 >/dev/null; then
       prettier $file --log-level silent -w
     fi
-    echo ":: Succeeded."
+    echo "[INFO] Succeeded."
     exit 0
   else
-    echo ":: Failed to download the JSON file."
+    echo "[ERROR] Failed to download the JSON file."
     exit 1
   fi
 fi
@@ -46,7 +46,7 @@ if [ -z "$1" ]; then
 fi
 
 if [ ! -f "$file" ]; then
-  echo ":: File $file not found. You can refresh it using --refresh."
+  echo "[ERROR] File $file not found. You can refresh it using --refresh."
   exit 1
 fi
 
@@ -57,14 +57,15 @@ question_id=$(printf "%04d" $question_id)
 new_py_file="$PWD/$question_id-$title_slug.py"
 
 if [ "$titleSlug" == "null" ]; then
-  echo ":: Question ID $question_id not found."
+  echo "[ERROR] Question ID $question_id not found."
+  exit 1
 else
   touch "$new_py_file"
   nano "$new_py_file"
   if command -v black 2>&1 >/dev/null; then
-    echo ":: Running black formatter on the following files:"
-    echo "   - $new_py_file"
+    echo "[INFO] Running black formatter on the following files:"
+    echo "       - $new_py_file"
     black "$new_py_file" -l 100 -q
-    echo ":: Black formatting applied."
+    echo "[INFO] Black formatting applied."
   fi
 fi

@@ -4,26 +4,27 @@
 #    Run app under xwayland-satellite
 # ---------------------------------------------------------------------------- #
 if ! command -v xwayland-satellite 2>&1 >/dev/null; then
-  echo "error: xwayland-satellite not installed."
+  echo "[ERROR] xwayland-satellite not installed"
   exit 1
 fi
 
 if ! pgrep -x "xwayland-satell" >/dev/null; then
 
-  read -p "xwayland-satellite is not running. Do you want to start it? (Y/n): " response
+  echo "[INFO] xwayland-satellite is not running"
+  read -p "Do you want to start it? (Y/n): " response
   response=${response:-Y}
 
   if [[ "$response" =~ ^[Yy]$ ]]; then
     (xwayland-satellite &> /dev/null &)
     if [ $? -eq 0 ]; then
-      echo "xwayland-satellite started."
+      echo "[INFO] xwayland-satellite started"
     else
-      echo "failed to start xwayland-satellite."
+      echo "[ERROR] Failed to start xwayland-satellite"
       exit 1
     fi
   else
-    echo "exiting."
-    exit 1
+    echo "[INFO] Exiting"
+    exit 0
   fi
 fi
 
