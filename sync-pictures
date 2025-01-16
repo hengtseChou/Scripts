@@ -1,7 +1,7 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------- #
 #    Script made by hengtseChou
-#    An rclone wrapper to sync ~/Pictures go Google Drive
+#    An rclone wrapper that syncs ~/Pictures to Google Drive or OneDrive
 # ---------------------------------------------------------------------------- #
 BLUE='\e[94m'
 NC='\e[0m'
@@ -16,7 +16,15 @@ if [ "$1" == "push" ]; then
 	read -e -r response
 	response=${response:-y}
 	if [[ "$response" == "y" ]]; then
-		rclone sync ~/Pictures/ gdrive:Pictures/ --transfers 16 --checkers 64 -P --exclude="Screenshots/"
+		if [[ "$2" == "--onedrive" ]]; then
+			remote="onedrive"
+		elif [[ "$2" == "--gdrive" ]] || [[ "$2" == "" ]]; then
+			remote="gdrive"
+		else
+			echo "[ERROR] Invalid remote. Exiting."
+			exit 1
+		fi
+		rclone sync ~/Pictures/ $remote:Pictures/ --transfers 16 --checkers 64 -P --exclude="Screenshots/"
 	else
 		echo "[INFO] Syncing canceled."
 		exit 0
@@ -26,12 +34,20 @@ elif [ "$1" == "pull" ]; then
 	read -e -r response
 	response=${response:-y}
 	if [[ "$response" == "y" ]]; then
-		rclone sync gdrive:Pictures/ ~/Pictures --transfers 16 --checkers 64 -P
+		if [[ "$2" == "--onedrive" ]]; then
+			remote="onedrive"
+		elif [[ "$2" == "--gdrive" ]] || [[ "$2" == "" ]]; then
+			remote="gdrive"
+		else
+			echo "[ERROR] Invalid remote. Exiting."
+			exit 1
+		fi
+		rclone sync $remote:Pictures/ ~/Pictures --transfers 16 --checkers 64 -P
 	else
 		echo "[INFO] Syncing canceled."
 		exit 0
 	fi
 else
-	echo "Usage: $0 {push|pull}"
+	echo "Usage: $0 {push|pull} [--onedrive|--gdrive (default)]"
 	exit 1
 fi
