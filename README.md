@@ -1,6 +1,6 @@
 # Scripts
 
-These scripts simplify or wrap many of my daily routine/command line operations that are too long so cannot remember. See each file for more description.
+These scripts simplify or wrap many of my daily routine/command line operations that are too long to remember. See each file for more description.
 
 ## Linux environment
 
