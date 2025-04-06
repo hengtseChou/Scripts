@@ -4,71 +4,66 @@
 #    Clean up __pycache__ directories and .python_history files
 #    Recursively from the current directory
 # ---------------------------------------------------------------------------- #
-if ! pacman -Qi fd 2>&1 >/dev/null; then
-  echo "[ERROR] fd is not installed"
-  exit 1
-fi
-
 use_trash=false
 if command -v trash 2>&1 >/dev/null; then
   use_trash=true
 fi
 
-pycache_dirs=$(fd -I --type d "__pycache__" --exclude=".pyenv" --exclude="pipx" --exclude="Trash" --exclude=".venv" --exclude=".vscode")
-python_history_files=$(fd -I --type f "python_history" --exclude="Trash")
-if [ -z "$pycache_dirs" ] && [ -z "$python_history_files" ]; then
-  echo "[INFO] No __pycache__ directories or .python_history files found"
+pycache=$(find $(pwd) | grep -E "(/__pycache__$)" | grep -vE "(\.vscode|\.local|site-packages|\.cache)")
+py_history=$(find $(pwd) | grep -E "(python_history$)" | grep -vE "(\.vscode|\.local|site-packages|\.cache)")
+if [ -z "$pycache" ] && [ -z "$py_history" ]; then
+  echo "No __pycache__ directories or .python_history files found"
   exit 0
 fi
-if [ -n "$pycache_dirs" ]; then
-  echo "[INFO] The following __pycache__ directories were found:"
+if [ -n "$pycache" ]; then
+  echo "The following __pycache__ directories were found:"
   while IFS= read -r dir; do
-    echo "        - $PWD/$dir"
-  done <<<"$pycache_dirs"
+    echo "  - $dir"
+  done <<<"$pycache"
 else
-  echo "[INFO] No __pycache__ directories found"
+  echo "No __pycache__ directories found"
 fi
-if [ -n "$python_history_files" ]; then
-  echo "[INFO] The following .python_history files were found:"
+if [ -n "$py_history" ]; then
+  echo "The following .python_history files were found:"
   while IFS= read -r file; do
-    echo "        - $PWD/$file"
-  done <<<"$python_history_files"
+    echo "  - $file"
+  done <<<"$py_history"
 else
-  echo "[INFO] No .python_history files found"
+  echo "No .python_history files found"
 fi
 
 read -p "Do you want to delete all of these directories and files? (yes/no) [yes]: " confirm
 confirm=${confirm:-yes}
 
 if [ "$confirm" == "yes" ]; then
-  if [ -n "$pycache_dirs" ]; then
-    echo "$pycache_dirs" | while read -r dir; do
+  if [ -n "$pycache" ]; then
+    echo "$pycache" | while read -r dir; do
       if $use_trash; then
         if trash "$dir"; then
-          echo "[INFO] Deleted: $PWD/$dir"
+          echo "Deleted: $PWD/$dir"
         else
           echo "[ERROR] Failed to delete: $PWD/$dir"
         fi
       else
         if rm -rf "$dir"; then
-          echo "[INFO] Removed: $PWD/$dir"
+          echo "Removed: $PWD/$dir"
         else
           echo "[ERROR] Failed to reomve: $PWD/$dir"
         fi
       fi
     done
   fi
-  if [ -n "$python_history_files" ]; then
-    echo "$python_history_files" | while read -r file; do
+  if [ -n "$py_history" ]; then
+    echo "$py_history" | while read -r file; do
       if $use_trash; then
         if trash "$file"; then
-          echo "[INFO] Deleted: $PWD/$file"
+          echo "Deleted: $PWD/$file"
         else
           echo "[ERROR] Failed to delete: $PWD/$file"
         fi
       else
         if rm -f "$file"; then
-          echo "[INFO] Removed: $PWD/$file"
+          echo "Removed: $PWD/$file"
         else
           echo "[ERROR] Failed to remove: $PWD/$file"
         fi
@@ -76,5 +71,5 @@ if [ "$confirm" == "yes" ]; then
     done
   fi
 else
-  echo "[INFO] Deletion aborted"
+  echo "Deletion aborted"
 fi
