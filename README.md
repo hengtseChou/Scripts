@@ -28,7 +28,6 @@ These scripts simplify or wrap many of my daily routine/command line operations 
 ## Cleanup
 
 - `pyclean`
-- `rclean`
 
 ## Sync GDrive
 
